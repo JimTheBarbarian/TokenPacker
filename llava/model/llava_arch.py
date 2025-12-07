@@ -33,6 +33,11 @@ class LlavaMetaModel:
             self.vision_tower = build_vision_tower(config, delay_load=True)
             self.mm_projector = build_vision_projector(config)
 
+            if 'unpad' in getattr(config, 'mm_patch_merge_type', ''):
+                self.image_newline = nn.Parameter(
+                    torch.empty(config.hidden_size, dtype=self.dtype)
+                )
+
     def get_vision_tower(self):
         vision_tower = getattr(self, 'vision_tower', None)
         if type(vision_tower) is list:
@@ -44,7 +49,7 @@ class LlavaMetaModel:
         mm_vision_select_layer = model_args.mm_vision_select_layer
         mm_vision_select_feature = model_args.mm_vision_select_feature
         pretrain_mm_mlp_adapter = model_args.pretrain_mm_mlp_adapter
-
+        mm_patch_merge_type = model_args.mm_patch_merge_type
         self.config.mm_vision_tower = vision_tower
 
         if self.get_vision_tower() is None:
@@ -278,3 +283,5 @@ class LlavaMetaForCausalLM(ABC):
 
         for m in self.modules():
             m.tokenizer = tokenizer
+
+
