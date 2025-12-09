@@ -3,7 +3,7 @@ import torch.nn as nn
 
 from transformers import CLIPVisionModel, CLIPImageProcessor, CLIPVisionConfig
 
-
+from transformers import Siglip2VisionModel, Siglip2ImageProcessor, Siglip2VisionConfig
 class CLIPVisionTower(nn.Module):
     def __init__(self, vision_tower, args, delay_load=False):
         super().__init__()
@@ -87,3 +87,40 @@ class CLIPVisionTower(nn.Module):
     @property
     def num_patches(self):
         return (self.config.image_size // self.config.patch_size) ** 2
+    
+
+class SiglipVisionTower(nn.Module):
+    def __init__(self, vision_tower, args, delay_load=False):
+        super().__init__()
+        # ... same initialization ...
+        if not delay_load:
+            self.load_model()
+        else:
+            self.cfg_only = Siglip2VisionConfig.from_pretrained(self.vision_tower_name)
+
+    def load_model(self):
+        self.image_processor = Siglip2ImageProcessor.from_pretrained(self.vision_tower_name)
+        self.vision_tower = Siglip2VisionModel.from_pretrained(self.vision_tower_name)
+        self.vision_tower.requires_grad_(False)
+        self.is_loaded = True
+
+    def feature_select(self, image_forward_outs, layers=[6,8,10,11]):
+        image_feature_list = []
+        for l in layers:
+            image_feature_list.append(image_forward_outs.hidden_states[l])
+        image_features_multi = torch.cat(image_feature_list, dim=2)
+        
+        image_features = image_forward_outs.hidden_states[self.select_layer]
+        
+        if self.select_feature == 'patch':
+            # No slicing needed - SigLIP has no CLS token
+            image_features = image_features
+            image_features_multi = image_features_multi
+        elif self.select_feature == 'cls_patch':
+            # May want to handle this differently or raise an error
+            image_features = image_features
+        else:
+            raise ValueError(f'Unexpected select feature: {self.select_feature}')
+        
+        return image_features, image_features_multi
+

@@ -1,12 +1,12 @@
 #!/bin/bash
 
-CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 deepspeed llava/train/train_mem.py \
+CUDA_VISIBLE_DEVICES=0,1,2,3 deepspeed llava/train/train_mem.py \
     --deepspeed ./scripts/zero2.json \
-    --model_name_or_path vicuna-7b-v1.5 \
+    --model_name_or_path Qwen3/Qwen3-0.6b \
     --version plain \
-    --data_path /path/to/blip_laion_cc_sbu_558k.json \
-    --image_folder ./data/llava_pretrain_558k \
-    --vision_tower ./clip-vit-large-patch14-336 \
+    --data_path ../../../../../ssss/Datasets/llava-pretrain/blip_laion_cc_sbu_558k.json \
+    --image_folder ../../../../../ssss/Datasets/llava-pretrain/llava_pretrain_558k \
+    --vision_tower google/siglip2-base-patch16-384 \
     --mm_projector_type tokenpacker \
     --scale_factor 2 \
     --tune_mm_mlp_adapter True \
@@ -14,7 +14,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 deepspeed llava/train/train_mem.py \
     --mm_use_im_start_end False \
     --mm_use_im_patch_token False \
     --bf16 True \
-    --output_dir ./checkpoints/llava-tokenpacker-pretrain/ \
+    --output_dir ../../../../../ssss/Datasets/llave-pretrain/checkpoints/llava-tokenpacker-pretrain/ \
     --num_train_epochs 1 \
     --per_device_train_batch_size 32 \
     --per_device_eval_batch_size 4 \

@@ -6,6 +6,7 @@
 
 # MODEL_VERSION=vicuna-v1-3-7b
 # MODEL_VERSION=llama-2-7b-chat
+MODEL_VERSION=qwen-0.6b
 
 ########### DO NOT CHANGE ###########
 ########### USE THIS FOR BOTH ###########
