@@ -36,7 +36,7 @@
 #    --report_to wandb
 
 # Multi-GPU training with PyTorch DDP
- torchrun --nproc_per_node=NUM_GPUS --master_port=25001 llava/train/train_no_deepspeed.py \
+ torchrun --nproc_per_node=4 --master_port=25001 llava/train/train_no_deepspeed.py \
     --model_name_or_path Qwen3/Qwen3-0.6b \
     --version plain \
     --data_path ../../../../../ssss/Datasets/llava-pretrain/blip_laion_cc_sbu_558k.json \
