@@ -8,19 +8,19 @@ from transformers.generation.utils import GenerateOutput
 
 from ..llava_arch import LlavaMetaModel, LlavaMetaForCausalLM
 
-class LlavaConfig(Qwen3Config):
+class LlavaQwenConfig(Qwen3Config):
     model_type = "llava_qwen3"
 
 
 class LlavaQwen3model(LlavaMetaModel, Qwen3Model):
-    config_class = LlavaConfig
+    config_class = LlavaQwenConfig
 
     def __init__(self, config):
         super(LlavaQwen3model, self).__init__(config)
 
 
 class LlavaQwen3ForCausalLM(Qwen3ForCausalLM, LlavaMetaForCausalLM):
-    config_class = LlavaConfig # Added this line to explicitly set the config_class
+    config_class = LlavaQwenConfig # Added this line to explicitly set the config_class
 
     def __init__(self, config):
         super(LlavaQwen3ForCausalLM, self).__init__(config)
@@ -137,5 +137,5 @@ class LlavaQwen3ForCausalLM(Qwen3ForCausalLM, LlavaMetaForCausalLM):
         return inputs
 
 
-AutoConfig.register("llava_qwen3", LlavaConfig)
-AutoModelForCausalLM.register(LlavaConfig, LlavaQwen3ForCausalLM)
+AutoConfig.register("llava_qwen3", LlavaQwenConfig)
+AutoModelForCausalLM.register(LlavaQwenConfig, LlavaQwen3ForCausalLM)

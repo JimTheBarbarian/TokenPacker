@@ -19,7 +19,7 @@ Training script without DeepSpeed dependencies.
 Uses native PyTorch DDP for distributed training.
 Does not support LoRA or quantization.
 """
-
+import sys
 import os
 import copy
 from dataclasses import dataclass, field
@@ -48,7 +48,10 @@ from torchvision.transforms import Compose, ToTensor, Normalize
 
 
 local_rank = None
-
+f = open(os.devnull, 'w')
+if local_rank != 0:
+    sys.stdout = f
+    sys.stderr = f
 
 def rank0_print(*args):
     if local_rank == 0:
