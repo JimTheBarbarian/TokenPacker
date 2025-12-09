@@ -1,2 +1,2 @@
 from .model import LlavaLlamaForCausalLM
-from .model.llava_qwen import LlavaQwen3ForCausalLM
+from .model import LlavaQwen3ForCausalLM
