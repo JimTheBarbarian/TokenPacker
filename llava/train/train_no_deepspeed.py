@@ -46,11 +46,6 @@ import torch.nn.functional as F
 from torchvision.transforms import Compose, ToTensor, Normalize
 
 
-local_rank = None
-f = open(os.devnull, 'w')
-if local_rank != 0:
-    sys.stdout = f
-    sys.stderr = f
 
 def rank0_print(*args):
     if local_rank == 0:
