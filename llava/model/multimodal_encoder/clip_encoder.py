@@ -3,7 +3,7 @@ import torch.nn as nn
 
 from transformers import CLIPVisionModel, CLIPImageProcessor, CLIPVisionConfig
 
-from transformers import Siglip2VisionModel, Siglip2ImageProcessor, Siglip2VisionConfig
+from transformers import SiglipVisionModel, SiglipImageProcessor, SiglipVisionConfig
 class CLIPVisionTower(nn.Module):
     def __init__(self, vision_tower, args, delay_load=False):
         super().__init__()
@@ -99,11 +99,11 @@ class SiglipVisionTower(nn.Module):
         if not delay_load:
             self.load_model()
         else:
-            self.cfg_only = Siglip2VisionConfig.from_pretrained(self.vision_tower_name)
+            self.cfg_only = SiglipVisionConfig.from_pretrained(self.vision_tower_name)
 
     def load_model(self):
-        self.image_processor = Siglip2ImageProcessor.from_pretrained(self.vision_tower_name)
-        self.vision_tower = Siglip2VisionModel.from_pretrained(self.vision_tower_name)
+        self.image_processor = SiglipImageProcessor.from_pretrained(self.vision_tower_name)
+        self.vision_tower = SiglipVisionModel.from_pretrained(self.vision_tower_name)
         self.vision_tower.requires_grad_(False)
         self.is_loaded = True
 
