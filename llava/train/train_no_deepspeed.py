@@ -39,7 +39,6 @@ from llava.constants import IGNORE_INDEX, IMAGE_TOKEN_INDEX, DEFAULT_IMAGE_TOKEN
 from torch.utils.data import Dataset
 from llava import conversation as conversation_lib
 from llava.model import *
-from llava.model.llava_qwen import LlavaQwen3ForCausalLM
 from llava.mm_utils import tokenizer_image_token
 from llava.patch_divide import Image_Patch
 from PIL import Image
