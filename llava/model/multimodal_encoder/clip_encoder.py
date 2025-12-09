@@ -92,7 +92,10 @@ class CLIPVisionTower(nn.Module):
 class SiglipVisionTower(nn.Module):
     def __init__(self, vision_tower, args, delay_load=False):
         super().__init__()
-        # ... same initialization ...
+        self.vision_tower_name = vision_tower
+        self.select_layer = args.mm_vision_select_layer
+
+
         if not delay_load:
             self.load_model()
         else:
@@ -112,15 +115,6 @@ class SiglipVisionTower(nn.Module):
         
         image_features = image_forward_outs.hidden_states[self.select_layer]
         
-        if self.select_feature == 'patch':
-            # No slicing needed - SigLIP has no CLS token
-            image_features = image_features
-            image_features_multi = image_features_multi
-        elif self.select_feature == 'cls_patch':
-            # May want to handle this differently or raise an error
-            image_features = image_features
-        else:
-            raise ValueError(f'Unexpected select feature: {self.select_feature}')
         
         return image_features, image_features_multi
 
