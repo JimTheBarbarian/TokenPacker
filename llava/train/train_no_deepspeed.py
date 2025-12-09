@@ -817,13 +817,13 @@ def train():
         model = LlavaQwen3ForCausalLM.from_pretrained(
             model_args.model_name_or_path,
             cache_dir=training_args.cache_dir,
-            torch_dtype=compute_dtype,
+            dtype=compute_dtype,
         )
     else:
         model = transformers.LlamaForCausalLM.from_pretrained(
             model_args.model_name_or_path,
             cache_dir=training_args.cache_dir,
-            torch_dtype=compute_dtype,
+            dtype=compute_dtype,
         )
     
     model.config.use_cache = False
