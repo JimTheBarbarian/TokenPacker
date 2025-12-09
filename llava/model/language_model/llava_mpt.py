@@ -23,8 +23,12 @@ import math
 from transformers import AutoConfig, AutoModelForCausalLM
 from transformers.modeling_outputs import CausalLMOutputWithPast
 
-from .mpt.modeling_mpt import MPTConfig, MPTForCausalLM, MPTModel
-from llava.model.llava_arch import LlavaMetaModel, LlavaMetaForCausalLM
+class dummy:
+    pass
+
+'''
+#from .mpt.modeling_mpt import MPTConfig, MPTForCausalLM, MPTModel
+#from llava.model.llava_arch import LlavaMetaModel, LlavaMetaForCausalLM
 
 
 class LlavaMPTConfig(MPTConfig):
@@ -111,3 +115,4 @@ class LlavaMPTForCausalLM(MPTForCausalLM, LlavaMetaForCausalLM):
 
 AutoConfig.register("llava_mpt", LlavaMPTConfig)
 AutoModelForCausalLM.register(LlavaMPTConfig, LlavaMPTForCausalLM)
+'''
