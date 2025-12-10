@@ -23,7 +23,7 @@ import sys
 
 import sys
 print("Python executable:", sys.executable)
-print("\nPython path:")
+print("\nPython path:", sys.path)
 import os
 import copy
 from dataclasses import dataclass, field
