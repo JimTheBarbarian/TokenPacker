@@ -36,7 +36,7 @@ import torch.distributed as dist
 
 import transformers
 from transformers import Trainer
-sys.path.append(str(pathlib.Path(__file__).resolve().parent.parent))
+sys.path.append(str(pathlib.Path(__file__).resolve().parent.parent.parent))
 print("\nPython path:", sys.path)
 
 
