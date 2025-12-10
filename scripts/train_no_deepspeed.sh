@@ -49,6 +49,7 @@ cd /home/edayag/llava/TokenPacker
     --data_path ../../../../../ssss/Datasets/llava-pretrain/blip_laion_cc_sbu_558k.json \
     --image_folder ../../../../../ssss/Datasets/llava-pretrain/llava_pretrain_558k \
     --vision_tower google/siglip2-base-patch16-384 \
+    --hidden_size 768 \
     --mm_projector_type tokenpacker \
     --scale_factor 2 \
     --tune_mm_mlp_adapter True \
