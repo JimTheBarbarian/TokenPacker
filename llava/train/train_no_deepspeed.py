@@ -22,7 +22,6 @@ Does not support LoRA or quantization.
 import sys
 
 import sys
-print("Python executable:", sys.executable)
 import os
 import copy
 from dataclasses import dataclass, field
