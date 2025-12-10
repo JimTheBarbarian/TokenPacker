@@ -34,6 +34,8 @@ import torch.distributed as dist
 
 import transformers
 from transformers import Trainer
+sys.path.append(str(pathlib.Path(__file__).resolve().parent.parent))
+
 
 from llava.constants import IGNORE_INDEX, IMAGE_TOKEN_INDEX, DEFAULT_IMAGE_TOKEN, DEFAULT_IM_START_TOKEN, DEFAULT_IM_END_TOKEN
 from torch.utils.data import Dataset
