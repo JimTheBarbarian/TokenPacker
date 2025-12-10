@@ -23,7 +23,6 @@ import sys
 
 import sys
 print("Python executable:", sys.executable)
-print("\nPython path:", sys.path)
 import os
 import copy
 from dataclasses import dataclass, field
@@ -39,11 +38,12 @@ import torch.distributed as dist
 import transformers
 from transformers import Trainer
 sys.path.append(str(pathlib.Path(__file__).resolve().parent.parent))
+print("\nPython path:", sys.path)
 
 
-from llava.constants import IGNORE_INDEX, IMAGE_TOKEN_INDEX, DEFAULT_IMAGE_TOKEN, DEFAULT_IM_START_TOKEN, DEFAULT_IM_END_TOKEN
-from torch.utils.data import Dataset
-from llava import conversation as conversation_lib
+from .llava.constants import IGNORE_INDEX, IMAGE_TOKEN_INDEX, DEFAULT_IMAGE_TOKEN, DEFAULT_IM_START_TOKEN, DEFAULT_IM_END_TOKEN
+from .torch.utils.data import Dataset
+from .llava import conversation as conversation_lib
 from llava.model import *
 from llava.mm_utils import tokenizer_image_token
 from llava.patch_divide import Image_Patch
