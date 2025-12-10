@@ -38,11 +38,11 @@
 # Multi-GPU training with PyTorch DDP
 
 #!/bin/bash
-#pip install -e .
 
 
 source /ssss/Datasets/llava-pretrain/llava_real/.venv/bin/activate
 cd /home/edayag/llava/TokenPacker
+
  torchrun --nproc_per_node=4 --master_port=25001 llava/train/train_no_deepspeed.py \
     --model_name_or_path Qwen/Qwen3-0.6b \
     --version plain \
