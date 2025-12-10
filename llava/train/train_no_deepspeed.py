@@ -20,6 +20,10 @@ Uses native PyTorch DDP for distributed training.
 Does not support LoRA or quantization.
 """
 import sys
+
+import sys
+print("Python executable:", sys.executable)
+print("\nPython path:")
 import os
 import copy
 from dataclasses import dataclass, field
