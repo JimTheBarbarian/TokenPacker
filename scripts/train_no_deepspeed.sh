@@ -37,8 +37,9 @@
 
 # Multi-GPU training with PyTorch DDP
 
+#!/bin/bash
 
-source /ssss/Datasets/llava-pretrain/llava_real/bin/activate
+source /ssss/Datasets/llava-pretrain/llava_real/.venv/bin/activate
 cd /home/edayag/llava/TokenPacker
 pip install -e .
  torchrun --nproc_per_node=4 --master_port=25001 llava/train/train_no_deepspeed.py \
