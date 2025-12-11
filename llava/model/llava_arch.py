@@ -103,7 +103,7 @@ class LlavaMetaForCausalLM(ABC):
         return image_features
 
     def prepare_inputs_labels_for_multimodal(
-        self, input_ids, attention_mask, past_key_values, labels, images, mode, h_block, w_block
+        self, input_ids, attention_mask, past_key_values, labels, images,  mode, h_block, w_block
     ):
         vision_tower = self.get_vision_tower()
         if vision_tower is None or images is None or input_ids.shape[1] == 1:

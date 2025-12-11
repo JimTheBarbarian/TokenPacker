@@ -48,27 +48,38 @@ class LlavaQwen3ForCausalLM(Qwen3ForCausalLM, LlavaMetaForCausalLM):
         output_attentions: Optional[bool] = None,
         output_hidden_states: Optional[bool] = None,
         images: Optional[torch.FloatTensor] = None,
-        image_sizes: Optional[List[List[int]]] = None,
+        mode: Optional[str] = "",
+        h_block: Optional[int] = None,
+        w_block: Optional[int] = None,
         return_dict: Optional[bool] = None,
     ) -> Union[Tuple, CausalLMOutputWithPast]:
+      
 
       if inputs_embeds is None:
             (
                 input_ids,
-                position_ids,
                 attention_mask,
                 past_key_values,
                 inputs_embeds,
                 labels
             ) = self.prepare_inputs_labels_for_multimodal(
                 input_ids,
-                position_ids,
                 attention_mask,
                 past_key_values,
                 labels,
                 images,
-                image_sizes
+                mode,
+                h_block,
+                w_block
+
             )
+      if position_ids is None and inputs_embeds is not None: 
+        # Create position_ids based on the new sequence length after image token insertion
+            seq_length = inputs_embeds.shape[1]
+            position_ids = torch.arange(
+            0, seq_length, dtype=torch.long, device=inputs_embeds.device
+            )
+            position_ids = position_ids. unsqueeze(0).expand(inputs_embeds.shape[0], -1)
 
       return super().forward(
             input_ids=input_ids,
@@ -106,7 +117,6 @@ class LlavaQwen3ForCausalLM(Qwen3ForCausalLM, LlavaMetaForCausalLM):
                 _
             ) = self.prepare_inputs_labels_for_multimodal(
                 inputs,
-                position_ids,
                 attention_mask,
                 None,
                 None,
