@@ -36,8 +36,7 @@ import torch.distributed as dist
 
 import transformers
 from transformers import Trainer
-sys.path.append(str(pathlib.Path(__file__).resolve().parent.parent.parent))
-print("\nPython path:", sys.path)
+sys.path.append(str(pathlib.Path(__file__).resolve().parent.parent.parent)) # hmmmm
 
 
 from llava.constants import IGNORE_INDEX, IMAGE_TOKEN_INDEX, DEFAULT_IMAGE_TOKEN, DEFAULT_IM_START_TOKEN, DEFAULT_IM_END_TOKEN
@@ -695,7 +694,10 @@ class SimpleLLaVATrainer(Trainer):
     Uses native PyTorch DDP for distributed training.
     """
 
-    def _get_train_sampler(self) -> Optional[torch.utils.data.Sampler]:
+    def _get_train_sampler(self,dataset=None) -> Optional[torch.utils.data.Sampler]:
+        if dataset is None: 
+            dataset = self.train_dataset
+            
         if self.train_dataset is None or not transformers.trainer.has_length(self.train_dataset):
             return None
 
