@@ -36,11 +36,9 @@ import torch.distributed as dist
 
 import transformers
 from transformers import Trainer
-from transformers.trainer import (
-    get_parameter_names,
-    ALL_LAYERNORM_LAYERS,
-    logger
-)
+from transformers.pytorch_utils import ALL_LAYERNORM_LAYERS
+from transformers.trainer_pt_utils import get_parameter_names
+
 sys.path.append(str(pathlib.Path(__file__).resolve().parent.parent.parent)) # hmmmm
 
 
