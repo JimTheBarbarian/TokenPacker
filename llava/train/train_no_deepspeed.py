@@ -83,7 +83,7 @@ class DataArguments:
     lazy_preprocess: bool = False
     is_multimodal: bool = False
     image_folder: Optional[str] = field(default=None)
-    image_aspect_ratio: str = 'square'
+    image_aspect_ratio: str = 'pad'
     image_grid_pinpoints: Optional[str] = field(default=None)
     patch_num: int = 9
 
@@ -587,7 +587,7 @@ class LazySupervisedDataset(Dataset):
         self.tokenizer = tokenizer
         self.list_data_dict = list_data_dict
         self.data_args = data_args
-
+        self.image_patch = Image_Patch(patch_num=data_args.patch_num)
     def __len__(self):
         return len(self.list_data_dict)
 
@@ -618,12 +618,63 @@ class LazySupervisedDataset(Dataset):
             image_folder = self.data_args.image_folder
             processor = self.data_args.image_processor
             patch_num = self.data_args.patch_num
-            imagepatch = Image_Patch(
-                image_path=os.path.join(image_folder, image_file),
-                processor=processor,
-                patch_num=patch_num
-            )
-            image = imagepatch()
+            image = Image.open(os.path.join(image_folder, image_file)).convert('RGB')
+            if self.data_args.image_aspect_ratio == 'pad':
+                def expand2square(pil_img, background_color):
+                    width, height = pil_img.size
+                    if width == height:
+                        return pil_img
+                    elif width > height:
+                        result = Image.new(pil_img.mode, (width, width), background_color)
+                        result.paste(pil_img, (0, (width - height) // 2))
+                        return result
+                    else:
+                        result = Image.new(pil_img.mode, (height, height), background_color)
+                        result.paste(pil_img, ((height - width) // 2, 0))
+                        return result
+                image = expand2square(image, tuple(int(x*255) for x in processor.image_mean))
+                image_tensor = processor.preprocess(image, return_tensors='pt')['pixel_values'][0]
+                image_tensor = image_tensor.unsqueeze(0)
+            elif self.data_args.image_aspect_ratio == 'slice':
+                image = self.preprocess(image)
+                image = image.unsqueeze(0)
+                h, w = image.shape[-2:]
+                block_size = 336
+                h_block, w_block = self.image_patch.calculate(h, w)
+                h_ratio = block_size*h_block/h
+                w_ratio = block_size*w_block/w
+                if h_ratio<=w_ratio:
+                    w_ = min(block_size*w_block, round(w*h_ratio))
+                    h_ = block_size*h_block
+                else:
+                    w_ = block_size*w_block
+                    h_ = min(block_size*h_block, round(h*w_ratio))
+                image_inter = F.interpolate(image, size=(h_,w_), mode='bilinear')
+                image = torch.zeros((1, 3, block_size*h_block, block_size*w_block)).to(dtype=image_inter.dtype, device=image_inter.device)
+                image[:, :, :h_, :w_] = image_inter
+        
+                split_images = []
+                for i_ in range(h_block):
+                    for j_ in range(w_block):
+                        image_s = image[:,:,block_size*i_:block_size*(i_+1), block_size*j_:block_size*(j_+1)]
+                        split_images.append(image_s)
+                if len(split_images)>1:
+                    h_ratio = block_size/h
+                    w_ratio = block_size/w
+                    if h_ratio<=w_ratio:
+                        w_ = min(block_size, round(w*h_ratio))
+                        h_ = block_size
+                    else:
+                        w_ = block_size
+                        h_ = min(block_size, round(h*w_ratio))
+                    image_inter = F.interpolate(image, size=(h_,w_), mode='bilinear')
+                    image_s = torch.zeros((1, 3, block_size, block_size)).to(dtype=image_inter.dtype, device=image_inter.device)
+                    image_s[:, :, :h_, :w_] = image_inter
+                    split_images.append(image_s)
+                image_tensor = torch.cat(split_images, dim=0)
+            else:
+                image_tensor = processor.preprocess(image, return_tensors='pt')['pixel_values'][0]
+                image_tensor = image_tensor.unsqueeze(0)            
             sources = preprocess_multimodal(
                 copy.deepcopy([e["conversations"] for e in sources]),
                 self.data_args)
@@ -643,7 +694,7 @@ class LazySupervisedDataset(Dataset):
         elif self.data_args.is_multimodal:
             # image does not exist in the data, but the model is multimodal
             crop_size = self.data_args.image_processor.crop_size
-            data_dict['image'] = torch.zeros(3, crop_size['height'], crop_size['width'])
+            data_dict['image'] = torch.zeros(1,3, crop_size['height'], crop_size['width'])
         return data_dict
 
 
