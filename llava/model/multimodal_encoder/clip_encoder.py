@@ -118,3 +118,49 @@ class SiglipVisionTower(nn.Module):
         
         return image_features, image_features_multi
 
+
+
+    @torch.no_grad()
+    def forward(self, images):
+
+        if type(images) is list:
+            image_features = []
+            for image in images:
+                image_forward_out = self.vision_tower(image.to(device=self.device, dtype=self.dtype).unsqueeze(0), output_hidden_states=True)
+                image_feature, image_feature_multi = self.feature_select(image_forward_out)
+
+                image_features.append(image_feature.to(image.dtype))
+                image_features_multi.append(image_feature_multi.to(image.dtype))
+
+        else:
+            image_forward_outs = self.vision_tower(images.to(device=self.device, dtype=self.dtype), output_hidden_states=True)
+            image_features, image_features_multi = self.feature_select(image_forward_outs)
+
+        return (image_features.to(images.dtype), image_features_multi.to(images.dtype))
+
+    @property
+    def dummy_feature(self):
+        return torch.zeros(1, self.hidden_size, device=self.device, dtype=self.dtype)
+
+    @property
+    def dtype(self):
+        return self.vision_tower.dtype
+
+    @property
+    def device(self):
+        return self.vision_tower.device
+
+    @property
+    def config(self):
+        if self.is_loaded:
+            return self.vision_tower.config
+        else:
+            return self.cfg_only
+
+    @property
+    def hidden_size(self):
+        return self.config.hidden_size
+
+    @property
+    def num_patches(self):
+        return (self.config.image_size // self.config.patch_size) ** 2
