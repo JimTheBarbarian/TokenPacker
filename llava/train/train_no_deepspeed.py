@@ -36,7 +36,7 @@ import torch.distributed as dist
 
 import transformers
 from transformers import Trainer
-from transformer.Trainer import (
+from transformers.Trainer import (
     get_parameter_names,
     ALL_LAYERNORM_LAYERS,
     logger
