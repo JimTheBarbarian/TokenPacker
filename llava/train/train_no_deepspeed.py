@@ -36,6 +36,11 @@ import torch.distributed as dist
 
 import transformers
 from transformers import Trainer
+from transformer.Trainer import (
+    get_parameter_names,
+    ALL_LAYERNORM_LAYERS,
+    logger
+)
 sys.path.append(str(pathlib.Path(__file__).resolve().parent.parent.parent)) # hmmmm
 
 
@@ -697,7 +702,7 @@ class SimpleLLaVATrainer(Trainer):
     def _get_train_sampler(self,dataset=None) -> Optional[torch.utils.data.Sampler]:
         if dataset is None: 
             dataset = self.train_dataset
-            
+
         if self.train_dataset is None or not transformers.trainer.has_length(self.train_dataset):
             return None
 
@@ -715,9 +720,7 @@ class SimpleLLaVATrainer(Trainer):
         opt_model = self.model
 
         if self.optimizer is None:
-            decay_parameters = transformers.trainer.get_parameter_names(
-                opt_model, transformers.trainer.ALL_LAYERNORM_LAYERS
-            )
+            decay_parameters = get_parameter_names(opt_model, ALL_LAYERNORM_LAYERS)
             decay_parameters = [name for name in decay_parameters if "bias" not in name]
             
             if self.args.mm_projector_lr is not None:
