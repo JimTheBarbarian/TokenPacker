@@ -42,8 +42,8 @@
 
 source /ssss/Datasets/llava-pretrain/llava_real/.venv/bin/activate
 cd /home/edayag/llava/TokenPacker
-
- python -m torch.distributed.run --nproc_per_node=4 --master_port=25001 llava/train/train_no_deepspeed.py \
+CUDA_VISIBLE_DEVICES=2,3
+ python -m torch.distributed.run --nproc_per_node=2 --master_port=25001 llava/train/train_no_deepspeed.py \
     --model_name_or_path Qwen/Qwen3-1.7b \
     --version plain \
     --data_path ../../../../../ssss/Datasets/llava-pretrain/blip_laion_cc_sbu_558k.json \
@@ -57,7 +57,7 @@ cd /home/edayag/llava/TokenPacker
     --mm_use_im_start_end False \
     --mm_use_im_patch_token False \
     --bf16 True \
-    --output_dir ../../../../../ssss/Datasets/llava-pretrain/checkpoints/llava-tokenpacker-pretrain/ \
+    --output_dir ../../../../../ssss/Datasets/llava-pretrain/checkpoints/llava-tokenpacker-pretrain/siglip_large_qwen_1.7 \
     --num_train_epochs 1 \
     --per_device_train_batch_size 32 \
     --per_device_eval_batch_size 4 \
